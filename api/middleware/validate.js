@@ -1,5 +1,5 @@
-const users = require('../users/userDb')
-const posts = require('../posts/postDb')
+const users = require('../routes/users/userDb')
+const posts = require('../routes/posts/postDb')
 
 function validateUserId() {
   return (req, res, next) => {
