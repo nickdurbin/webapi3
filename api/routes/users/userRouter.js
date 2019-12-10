@@ -32,7 +32,6 @@ router.post('/:id/posts', validateUserId(), validatePost(),  (req, res, next) =>
 });
 
 router.get('/', (req, res, next) => {
-  console.log(users)
   users.get()
     .then(users => {
       res.status(200).json(users)
