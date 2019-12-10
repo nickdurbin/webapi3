@@ -3,7 +3,7 @@ const posts = require('../routes/posts/postDb')
 
 function validateUserId() {
   return (req, res, next) => {
-    users.findById(req.params.id)
+    users.getById(req.params.id)
     .then(user => {
       if (user) {
         req.user = user
