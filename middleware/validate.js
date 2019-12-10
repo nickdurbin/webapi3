@@ -39,6 +39,7 @@ function validatePost() {
     } else if (!req.body.text) {
       return res.status(400).json({ message: "Missing require text field."})
     }
+    next()
   }
 }
 

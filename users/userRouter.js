@@ -1,8 +1,8 @@
 const express = require('express');
-const { validateUserId, validateUser } = require('../middleware/validate');
+const { validateUserId, validateUser, validatePost } = require('../middleware/validate');
 const users = require('./userDb');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post('/', validateUser(), (req, res) => {
   users.insert(req.body)
@@ -14,8 +14,21 @@ router.post('/', validateUser(), (req, res) => {
     })
 });
 
-router.post('/:id/posts', (req, res) => {
-
+router.post('/:id/posts', validateUserId(), validatePost(),  (req, res) => {
+  users.getUserPosts(req.params.id)
+    .then(user => {
+      if (user) {
+        user.insert(req.body)
+        .then(data => {
+          res.status(204).json({ ...data, ...req.body })
+        })
+      } else {
+        res.status(404).json({ message: "User posts not found." })
+      }
+    })
+    .catch(error => {
+      next(error)
+    })
 });
 
 router.get('/', (req, res) => {
@@ -32,8 +45,18 @@ router.get('/:id', validateUserId(), (req, res) => {
   res.json(req.user)
 });
 
-router.get('/:id/posts', (req, res) => {
-
+router.get('/:id/posts', validateUserId(), validatePost(), (req, res) => {
+  users.getUserPosts(req.params.id)
+    .then(user => {
+      if (user) {
+        res.status(200).json(user)
+      } else {
+        res.status(400).json({ message: "You do not have access."})
+      }
+    })
+    .catch(error => [
+      next(error)
+    ])
 });
 
 router.delete('/:id', validateUserId(), (req, res) => {
