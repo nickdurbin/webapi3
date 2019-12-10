@@ -3,7 +3,7 @@ module.exports = {
     client: 'sqlite3',
     useNullAsDefault: true,
     connection: {
-      filename: './data/blog.db3',
+      filename: './api/data/blog.db3',
     },
     pool: {
       afterCreate: (conn, done) => {
@@ -11,11 +11,11 @@ module.exports = {
       },
     },
     migrations: {
-      directory: './data/migrations',
+      directory: './api/data/migrations',
       tableName: 'knex_migrations',
     },
     seeds: {
-      directory: './data/seeds',
+      directory: './api/data/seeds',
     },
   },
 };
