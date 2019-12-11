@@ -1,9 +1,9 @@
-const users = require('../users/userDb')
-const posts = require('../posts/postDb')
+const users = require('../routes/users/userDb')
+const posts = require('../routes/posts/postDb')
 
 function validateUserId() {
   return (req, res, next) => {
-    users.findById(req.params.id)
+    users.getById(req.params.id)
     .then(user => {
       if (user) {
         req.user = user
@@ -43,6 +43,26 @@ function validatePost() {
   }
 }
 
+function validatePostId() {
+  return (req, res, next) => {
+    posts.getById(req.params.id)
+    .then(post => {
+      if (post) {
+        req.post = post
+        next()
+      } else {
+        res.status(404).json({ message: "Invalid post id." })
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(500).json({
+        message: "Error retrieving the post.",
+      })
+    })
+  }
+};
+
 module.exports = {
-  validateUserId, validateUser, validatePost
+  validateUserId, validateUser, validatePost, validatePostId
 }

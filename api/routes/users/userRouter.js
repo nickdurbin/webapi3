@@ -1,10 +1,11 @@
 const express = require('express');
-const { validateUserId, validateUser, validatePost } = require('../middleware/validate');
 const users = require('./userDb');
+const posts = require('../posts/postDb')
+const { validateUserId, validateUser, validatePost } = require('../../middleware/validate');
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', validateUser(), (req, res) => {
+router.post('/', validateUser(), (req, res, next) => {
   users.insert(req.body)
     .then(user => {
       res.status(201).json(user)
@@ -14,38 +15,31 @@ router.post('/', validateUser(), (req, res) => {
     })
 });
 
-router.post('/:id/posts', validateUserId(), validatePost(),  (req, res) => {
-  users.getUserPosts(req.params.id)
-    .then(user => {
-      if (user) {
-        user.insert(req.body)
-        .then(data => {
-          res.status(204).json({ ...data, ...req.body })
-        })
-      } else {
-        res.status(404).json({ message: "User posts not found." })
-      }
+router.post('/:id/posts', validateUserId(), validatePost(),  (req, res, next) => {
+  posts.insert({ ...req.body, user_id: req.params.id })
+    .then(post => {
+      res.status(201).json(post)
     })
     .catch(error => {
       next(error)
     })
 });
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   users.get()
-    .then(user => {
-      res.status(200).json(user)
+    .then(users => {
+      res.status(200).json(users)
     })
     .catch(error => {
       next(error)
     })
 });
 
-router.get('/:id', validateUserId(), (req, res) => {
+router.get('/:id', validateUserId(), (req, res, next) => {
   res.json(req.user)
 });
 
-router.get('/:id/posts', validateUserId(), validatePost(), (req, res) => {
+router.get('/:id/posts', validateUserId(), validatePost(), (req, res, next) => {
   users.getUserPosts(req.params.id)
     .then(user => {
       if (user) {
@@ -59,8 +53,8 @@ router.get('/:id/posts', validateUserId(), validatePost(), (req, res) => {
     ])
 });
 
-router.delete('/:id', validateUserId(), (req, res) => {
-  hubs.remove(req.user.id)
+router.delete('/:id', validateUserId(), (req, res, next) => {
+  users.remove(req.user.id)
     .then(count => {
       if (count > 0) {
         res.status(200).json({ message: `You have successfully deleted ${count} records.` })
@@ -71,7 +65,7 @@ router.delete('/:id', validateUserId(), (req, res) => {
     })
 });
 
-router.put('/:id', validateUserId(), validateUser(), (req, res) => {
+router.put('/:id', validateUserId(), validateUser(), (req, res, next) => {
   users.update(req.params.id, req.body)
     .then(user => {
       if (user) {
