@@ -1,5 +1,6 @@
 const express = require('express');
 const users = require('./userDb');
+const posts = require('../posts/postDb')
 const { validateUserId, validateUser, validatePost } = require('../../middleware/validate');
 
 const router = express.Router({ mergeParams: true });
@@ -15,16 +16,9 @@ router.post('/', validateUser(), (req, res, next) => {
 });
 
 router.post('/:id/posts', validateUserId(), validatePost(),  (req, res, next) => {
-  users.getUserPosts(req.params.id, req.params.postedBy)
-    .then(user => {
-      if (user) {
-        user.insert(req.body)
-        .then(data => {
-          res.status(201).json({ ...data, ...req.body })
-        })
-      } else {
-        res.status(404).json({ message: "User posts not found." })
-      }
+  posts.insert({ ...req.body, user_id: req.params.id })
+    .then(post => {
+      res.status(201).json(post)
     })
     .catch(error => {
       next(error)
