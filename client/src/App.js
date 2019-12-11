@@ -1,32 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { Switch, Route, withRouter } from 'react-router-dom';
+import CharacterPage from './components/Characters/CharacterPage';
+import Character from './components/Characters/Character';
 import styled from 'styled-components';
 import BG from './images/bg.jpg'
 
 function App() {
-  const [users, setUsers] = useState([])
-
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/users')
-      .then(res => {
-        setUsers(res.data)
-      })
-      .catch(err => {
-        console.log(err, 'Users could not be found.')
-      })
-  })
-
 
   return (
+    <>
+    <Switch>
+      {/* <Route exact path='/' component={Home} /> */}
+      <Route path='/characters' component={CharacterPage} />
+      <Route path='/characters/:id' component={Character} />
+    </Switch>
+
      <MainContainer>
-       {users.map(user => {
-         return (
-           <User className="userContainer" key={user.id}>
-             <h2>Name: {user.name}</h2>
-          </User>
-         )
-       })}
+       <CharacterPage />
      </MainContainer>
+    </>
   )
 }
 
@@ -43,19 +35,4 @@ const MainContainer = styled.main`
   object-fit: cover;
 `;
 
-const User = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20%;
-  max-height: 200px;
-  height: 100%;
-  margin: 1%;
-  padding: 1%;
-  background: white;
-  border: none;
-  border-radius: 1em;
-  box-shadow: 1px 3px 5px;
-`
-
-export default App;
+export default withRouter(App);
