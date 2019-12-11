@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import Character from './Character';
@@ -20,9 +21,11 @@ function CharacterPage(props) {
     <>
       {users.map(user => {
          return (
-          <User  key={user.id}>
-            <Character id={user.id} name={user.name} />
-          </User>
+           <Link to={`/characters/${user.id}`}>
+            <User key={user.id}>
+              <Character id={user.id} user={user} />
+            </User>
+          </Link>
          )
        })}
     </>
@@ -42,6 +45,8 @@ const User = styled.div`
   border: none;
   border-radius: 1em;
   box-shadow: 1px 3px 5px;
+  cursor: pointer;
+  text-decoration: none;
 `
 
 export default CharacterPage;

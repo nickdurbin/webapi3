@@ -10,9 +10,8 @@ function App() {
   return (
     <>
     <Switch>
-      {/* <Route exact path='/' component={Home} /> */}
-      <Route path='/characters' component={CharacterPage} />
-      <Route path='/characters/:id' component={Character} />
+      <Route path='/characters' render={props => <CharacterPage {...props} /> } />
+      <Route path='/characters/:id' render={props => <Character {...props} /> } />
     </Switch>
 
      <MainContainer>
