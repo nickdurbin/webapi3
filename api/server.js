@@ -12,7 +12,7 @@ server.get('/', (req, res) => {
 });
 
 server.use((res, req) => {
-  res.status(404).json({ message: "You have ventured into the abyss!"})
+  return res.status(404).json({ message: "You have ventured into the abyss!"})
 })
 
 server.use((err, req, res, next) => {

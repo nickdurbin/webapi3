@@ -18,7 +18,7 @@ router.get('/:id', validatePostId(), (req, res, next) => {
 });
 
 router.delete('/:id', validatePostId(), (req, res, next) => {
-  posts.remove(req.user.id)
+  posts.remove(req.post.id)
     .then(count => {
       if (count > 0) {
         res.status(200).json({ message: `You have successfully deleted ${count} records.` })
