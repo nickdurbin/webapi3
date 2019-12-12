@@ -48,7 +48,6 @@ function validatePostId() {
     posts.getById(req.params.id)
     .then(post => {
       if (post) {
-        req.post = post
         next()
       } else {
         res.status(404).json({ message: "Invalid post id." })

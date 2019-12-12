@@ -18,10 +18,12 @@ router.get('/:id', validatePostId(), (req, res, next) => {
 });
 
 router.delete('/:id', validatePostId(), (req, res, next) => {
-  posts.remove(req.post.id)
-    .then(count => {
-      if (count > 0) {
-        res.status(200).json({ message: `You have successfully deleted ${count} records.` })
+  posts.remove(req.params.id)
+    .then(postId => {
+      if (postId) {
+        res.status(204).json(postId)
+      } else {
+        res.status(404).json({ message: "The post did not exist."})
       }
     })
     .catch(error => {
@@ -32,9 +34,17 @@ router.delete('/:id', validatePostId(), (req, res, next) => {
 router.put('/:id', validatePost(), validatePostId(), (req, res, next) => {
   posts.update(req.params.id, req.body)
   .then(post => {
-    if (post) {
-      res.status(200).json(post)
-    }
+    posts.getById(req.params.id)
+     .then(post => {
+      if (post) {
+        res.status(200).json(post)
+      } else {
+        res.status(404).json({ error: "The post does not exist."})
+      } 
+     })
+     .catch(error => {
+       next(error)
+     })
   })
   .catch(error => {
     next(error)

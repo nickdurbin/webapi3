@@ -55,9 +55,9 @@ router.get('/:id/posts', validateUserId(), validatePost(), (req, res, next) => {
 
 router.delete('/:id', validateUserId(), (req, res, next) => {
   users.remove(req.user.id)
-    .then(count => {
-      if (count > 0) {
-        res.status(200).json({ message: `You have successfully deleted ${count} records.` })
+    .then(user => {
+      if (user) {
+        res.status(200).json(req.user)
       }
     })
     .catch(error => {
@@ -65,11 +65,11 @@ router.delete('/:id', validateUserId(), (req, res, next) => {
     })
 });
 
-router.put('/:id', validateUserId(), validateUser(), (req, res, next) => {
+router.put('/:id', validateUser(), validateUserId(), (req, res, next) => {
   users.update(req.params.id, req.body)
     .then(user => {
       if (user) {
-        res.status(200).json(user)
+        res.status(200).json(req.body)
       }
     })
     .catch(error => {
