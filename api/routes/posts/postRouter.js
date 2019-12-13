@@ -1,7 +1,7 @@
 const express = require('express')
 const posts = require('./postDb')
 const { validateUserId, validateUser, validatePost, validatePostId } = require('../../middleware/validate');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.get('/', (req, res, next) => {
   posts.get()
@@ -13,42 +13,36 @@ router.get('/', (req, res, next) => {
     })
 });
 
-router.get('/:id', validatePostId(), (req, res, next) => {
-  res.json(req.post)
+router.get('/:id', validatePostId, (req, res, next) => {
+  return res.status(200).json(req.post)
 });
 
-router.delete('/:id', validatePostId(), (req, res, next) => {
-  posts.remove(req.params.id)
-    .then(postId => {
-      if (postId) {
-        res.status(204).json(postId)
-      } else {
-        res.status(404).json({ message: "The post did not exist."})
+router.delete('/:id', validatePostId, (req, res, next) => {
+  posts.remove(req.post.id)
+    .then(count => {
+      if (count > 0) {
+        res.status(200).json({ message: "The post has been deleted" });
       }
     })
     .catch(error => {
-      next(error)
-    })
+      next(error);
+    });
 });
 
-router.put('/:id', validatePost(), validatePostId(), (req, res, next) => {
-  posts.update(req.params.id, req.body)
-  .then(post => {
-    posts.getById(req.params.id)
-     .then(post => {
-      if (post) {
-        res.status(200).json(post)
-      } else {
-        res.status(404).json({ error: "The post does not exist."})
-      } 
-     })
-     .catch(error => {
-       next(error)
-     })
+router.put('/:id', validatePost, validatePostId, (req, res, next) => {
+  posts.update(req.post.id, req.body)
+  .then(count => {
+    if (count > 0) {
+      res.status(200).json({
+        id: req.post.id,
+        text: req.body.text,
+        user_id: req.post.user_id
+      });
+    }
   })
   .catch(error => {
-    next(error)
-  })
+    next(error);
+  });
 });
 
 module.exports = router;

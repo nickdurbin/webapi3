@@ -5,7 +5,7 @@ const { validateUserId, validateUser, validatePost } = require('../../middleware
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', validateUser(), (req, res, next) => {
+router.post('/', validateUser, (req, res, next) => {
   users.insert(req.body)
     .then(user => {
       res.status(201).json(user)
@@ -15,7 +15,7 @@ router.post('/', validateUser(), (req, res, next) => {
     })
 });
 
-router.post('/:id/posts', validateUserId(), validatePost(),  (req, res, next) => {
+router.post('/:id/posts', validateUserId, validatePost,  (req, res, next) => {
   posts.insert({ ...req.body, user_id: req.params.id })
     .then(post => {
       res.status(201).json(post)
@@ -35,11 +35,11 @@ router.get('/', (req, res, next) => {
     })
 });
 
-router.get('/:id', validateUserId(), (req, res, next) => {
+router.get('/:id', validateUserId, (req, res, next) => {
   res.json(req.user)
 });
 
-router.get('/:id/posts', validateUserId(), validatePost(), (req, res, next) => {
+router.get('/:id/posts', validateUserId, validatePost, (req, res, next) => {
   users.getUserPosts(req.params.id)
     .then(user => {
       if (user) {
@@ -53,7 +53,7 @@ router.get('/:id/posts', validateUserId(), validatePost(), (req, res, next) => {
     ])
 });
 
-router.delete('/:id', validateUserId(), (req, res, next) => {
+router.delete('/:id', validateUserId, (req, res, next) => {
   users.remove(req.user.id)
     .then(user => {
       if (user) {
@@ -65,7 +65,7 @@ router.delete('/:id', validateUserId(), (req, res, next) => {
     })
 });
 
-router.put('/:id', validateUser(), validateUserId(), (req, res, next) => {
+router.put('/:id', validateUser, validateUserId, (req, res, next) => {
   users.update(req.params.id, req.body)
     .then(user => {
       if (user) {

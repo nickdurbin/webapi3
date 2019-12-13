@@ -11,7 +11,7 @@ server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`)
 });
 
-server.use((res, req) => {
+server.use((req, res) => {
   return res.status(404).json({ message: "You have ventured into the abyss!"})
 })
 
